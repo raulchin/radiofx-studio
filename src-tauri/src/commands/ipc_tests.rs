@@ -156,13 +156,18 @@ fn two_ipc_instances_reload_after_conflict_and_column_writes_cannot_restore_stal
     b.state::<AudioService>().shutdown();
 }
 
-/// Invoca los handlers y la autoridad ACL reales de Tauri mediante su transporte simulado.
+/// Invoca la ACL con el origen local que Tauri utiliza en cada plataforma, sin ampliar permisos.
 fn invoke(
     window: &tauri::WebviewWindow<MockRuntime>,
     command: &str,
     body: Value,
 ) -> Result<Value, Value> {
-    invoke_from(window, command, body, "tauri://localhost")
+    let origin = if cfg!(any(windows, target_os = "android")) {
+        "http://tauri.localhost"
+    } else {
+        "tauri://localhost"
+    };
+    invoke_from(window, command, body, origin)
 }
 
 /// Permite probar que un origen remoto no hereda los permisos de la ventana local.
