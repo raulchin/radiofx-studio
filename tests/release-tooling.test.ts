@@ -54,6 +54,40 @@ afterEach(() => {
 });
 
 describe("release command plans", () => {
+  /** Evita que autocrlf cambie los fuentes en Windows sin normalizar archivos binarios. */
+  it("keeps text checkouts in LF on Windows and leaves installer resources binary", () => {
+    const attributes = readFileSync(join(root, ".gitattributes"), "utf8");
+    expect(attributes.split(/\r?\n/)).toContain("* text=auto eol=lf");
+    for (const extension of [
+      "png",
+      "ico",
+      "icns",
+      "wav",
+      "mp3",
+      "ogg",
+      "flac",
+      "rfxbank",
+    ]) {
+      expect(attributes.split(/\r?\n/)).toContain(`*.${extension} -text`);
+    }
+    expect(
+      JSON.parse(readFileSync(join(root, ".prettierrc.json"), "utf8"))
+        .endOfLine,
+    ).toBe("lf");
+  });
+
+  /** Impide duplicar el símbolo de Info.plist al compilar los handlers IPC con macOS. */
+  it("shares one generated Tauri context between production and IPC tests", () => {
+    const production = readFileSync(join(root, "src-tauri/src/lib.rs"), "utf8");
+    const ipc = readFileSync(
+      join(root, "src-tauri/src/commands/ipc_tests.rs"),
+      "utf8",
+    );
+    expect(production.match(/tauri::generate_context!\(\)/g)).toHaveLength(1);
+    expect(ipc).not.toContain("tauri::generate_context!");
+    expect(ipc).toContain(".build(crate::app_context())");
+  });
+
   it("runs frontend then strict locked offline Rust checks without ignored hardware tests", () => {
     const result = cli("check.mjs", ["--dry-run"], fixture());
     expect(result.status).toBe(0);

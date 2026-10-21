@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+*.png -text
+*.ico -text
+*.icns -text
+*.wav -text
+*.mp3 -text
+*.ogg -text
+*.flac -text
+*.rfxbank -text

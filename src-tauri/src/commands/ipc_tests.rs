@@ -20,7 +20,7 @@ fn device_preference_saves_actual_restored_name_and_never_failed_target_or_opaqu
             set_output_device,
             get_library_snapshot
         ])
-        .build(tauri::generate_context!())
+        .build(crate::app_context())
         .unwrap();
     let main = tauri::WebviewWindowBuilder::new(&app, "main", Default::default())
         .build()
@@ -77,7 +77,7 @@ fn two_ipc_instances_reload_after_conflict_and_column_writes_cannot_restore_stal
                 set_output_device,
                 get_audio_engine_status
             ])
-            .build(tauri::generate_context!())
+            .build(crate::app_context())
             .unwrap()
     };
     let a = build();
@@ -223,7 +223,7 @@ fn tauri_ipc_handlers_validate_camel_case_errors_snapshots_and_actual_acl() {
             export_sound_banks,
         ])
         // El contexto generado conserva el manifiesto y las capabilities de produccion.
-        .build(tauri::generate_context!())
+        .build(crate::app_context())
         .unwrap();
     let main = tauri::WebviewWindowBuilder::new(&app, "main", Default::default())
         .build()

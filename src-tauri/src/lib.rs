@@ -9,6 +9,11 @@ pub(crate) mod test_support;
 use application::worker::AudioService;
 use tauri::{Emitter, Manager};
 
+/// Comparte el contexto entre producción y pruebas para incrustar Info.plist una sola vez en macOS.
+pub(crate) fn app_context<R: tauri::Runtime>() -> tauri::Context<R> {
+    tauri::generate_context!()
+}
+
 /// Inicia el shell y el worker sin abrir dispositivos de audio.
 /// Devuelve el error de Tauri si falla el arranque o el ciclo de la aplicación.
 pub fn run() -> tauri::Result<()> {
@@ -65,7 +70,7 @@ pub fn run() -> tauri::Result<()> {
             commands::cancel_bank_import,
             commands::export_sound_banks,
         ])
-        .build(tauri::generate_context!())?
+        .build(app_context())?
         .run(|app, event| {
             // Rompe explicitamente el ciclo AppHandle -> estado -> worker -> AppHandle.
             if matches!(event, tauri::RunEvent::Exit)
