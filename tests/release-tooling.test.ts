@@ -114,6 +114,26 @@ describe("release command plans", () => {
     expect(ipc).toContain(".build(crate::app_context())");
   });
 
+  /** Common Controls v6 debe estar disponible también al cargar los ejecutables de pruebas Windows. */
+  it("embeds Windows Common Controls in tests without duplicating the application manifest", () => {
+    const build = readFileSync(join(root, "src-tauri/build.rs"), "utf8");
+    const manifest = readFileSync(
+      join(root, "src-tauri/windows-app-manifest.xml"),
+      "utf8",
+    );
+    const resource = readFileSync(
+      join(root, "src-tauri/windows-manifest.rc"),
+      "utf8",
+    );
+    expect(build).toContain("WindowsAttributes::new_without_app_manifest()");
+    expect(build).toContain('compile_for_everything("windows-manifest.rc"');
+    expect(build).toContain(".manifest_required()");
+    expect(manifest).toContain('name="Microsoft.Windows.Common-Controls"');
+    expect(manifest).toContain('version="6.0.0.0"');
+    expect(manifest).not.toContain("requireAdministrator");
+    expect(resource).toContain('1 24 "windows-app-manifest.xml"');
+  });
+
   it("runs frontend then strict locked offline Rust checks without ignored hardware tests", () => {
     const result = cli("check.mjs", ["--dry-run"], fixture());
     expect(result.status).toBe(0);
