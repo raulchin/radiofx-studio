@@ -18,6 +18,23 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const temporary: string[] = [];
 
 /**
+ * Sustituye la ruta npm sin duplicar claves equivalentes en el entorno de Windows.
+ * @param path Ruta de la CLI JavaScript o wrapper que se quiere probar.
+ * @param base Variables iniciales, incluidas variantes de mayúsculas heredadas del runner.
+ * @returns Entorno con una única definición de npm_execpath.
+ */
+function npmEnvironment(path: string, base: NodeJS.ProcessEnv = process.env) {
+  return {
+    ...Object.fromEntries(
+      Object.entries(base).filter(
+        ([key]) => key.toLowerCase() !== "npm_execpath",
+      ),
+    ),
+    npm_execpath: path,
+  };
+}
+
+/**
  * Ejecuta solo la CLI de herramientas, nunca un build en estas pruebas.
  * @param script Nombre del script del repositorio.
  * @param args Opciones separadas del proceso.
@@ -54,6 +71,15 @@ afterEach(() => {
 });
 
 describe("release command plans", () => {
+  /** Las claves duplicadas por mayúsculas no deben ocultar el valor inyectado en los tests Windows. */
+  it("replaces inherited npm paths regardless of environment variable casing", () => {
+    const env = npmEnvironment("chosen.cjs", {
+      NPM_EXECPATH: "inherited.cjs",
+      npm_execpath: "other.cjs",
+      PATH: "unchanged",
+    });
+    expect(env).toEqual({ PATH: "unchanged", npm_execpath: "chosen.cjs" });
+  });
   /** Evita que autocrlf cambie los fuentes en Windows sin normalizar archivos binarios. */
   it("keeps text checkouts in LF on Windows and leaves installer resources binary", () => {
     const attributes = readFileSync(join(root, ".gitattributes"), "utf8");
@@ -169,10 +195,12 @@ describe("release command plans", () => {
   it("passes npm CLI paths with shell syntax as a single Node argument", () => {
     const npmCli = join(fixture(), "npm cli ; $HOME.cjs");
     writeFileSync(npmCli, "throw new Error('This fixture must not run');\n");
-    const result = cli("check.mjs", ["--dry-run"], root, {
-      ...process.env,
-      npm_execpath: npmCli,
-    });
+    const result = cli(
+      "check.mjs",
+      ["--dry-run"],
+      root,
+      npmEnvironment(npmCli),
+    );
     expect(result.status).toBe(0);
     const command = JSON.parse(result.stdout).commands[0];
     expect(command).toEqual({
@@ -184,10 +212,12 @@ describe("release command plans", () => {
   it("rejects npm command wrappers instead of invoking a shell", () => {
     const wrapper = join(fixture(), "npm.cmd");
     writeFileSync(wrapper, "not executable\n");
-    const result = cli("check.mjs", ["--dry-run"], root, {
-      ...process.env,
-      npm_execpath: wrapper,
-    });
+    const result = cli(
+      "check.mjs",
+      ["--dry-run"],
+      root,
+      npmEnvironment(wrapper),
+    );
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("CLI JavaScript");
     expect(result.stdout).toBe("");

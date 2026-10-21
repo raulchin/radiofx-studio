@@ -3,6 +3,11 @@ name: Paquetes de prueba sin firma
 on:
   workflow_dispatch:
     inputs:
+      platform:
+        description: Plataforma a empaquetar
+        type: choice
+        options: [all, windows, linux, macos]
+        default: all
       benchmark:
         description: Ejecutar tambien benchmark offline de CPU (no audio fisico)
         type: boolean
@@ -16,13 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-24.04
-            platform: linux
-          - os: windows-latest
-            platform: windows
-          - os: macos-latest
-            platform: macos
+        include: ${{ fromJSON(inputs.platform == 'windows' && '[{"os":"windows-latest","platform":"windows"}]' || inputs.platform == 'linux' && '[{"os":"ubuntu-24.04","platform":"linux"}]' || inputs.platform == 'macos' && '[{"os":"macos-latest","platform":"macos"}]' || '[{"os":"ubuntu-24.04","platform":"linux"},{"os":"windows-latest","platform":"windows"},{"os":"macos-latest","platform":"macos"}]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
