@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-fade-out-playback"
+description = "Enables the fade_out_playback command without any pre-configured scope."
+commands.allow = ["fade_out_playback"]
+
+[[permission]]
+identifier = "deny-fade-out-playback"
+description = "Denies the fade_out_playback command without any pre-configured scope."
+commands.deny = ["fade_out_playback"]

@@ -1,0 +1,38 @@
+[package]
+name = "radiofx-studio"
+version = "0.1.0"
+description = "Paleta local de efectos de sonido para radio y producción"
+edition = "2024"
+
+[lib]
+# El sufijo evita colisiones entre la biblioteca y el binario en Windows.
+name = "radiofx_studio_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rodio = { version = "=0.21.1", default-features = false, features = ["playback"] }
+uuid = { version = "1", features = ["v4"] }
+rusqlite = { version = "=0.40.2", features = ["bundled"] }
+symphonia = { version = "=0.5.5", default-features = false, features = ["wav", "pcm", "mp3", "ogg", "vorbis", "flac"] }
+sha2 = "=0.11.1"
+tauri-plugin-dialog = "=2.8.3"
+tokio = { version = "1", features = ["sync"] }
+cap-std = "=4.0.3"
+cap-fs-ext = "=4.0.3"
+
+[dev-dependencies]
+tauri = { version = "2", features = ["test"] }
+
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true

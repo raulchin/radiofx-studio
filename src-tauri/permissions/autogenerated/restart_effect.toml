@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-restart-effect"
+description = "Enables the restart_effect command without any pre-configured scope."
+commands.allow = ["restart_effect"]
+
+[[permission]]
+identifier = "deny-restart-effect"
+description = "Denies the restart_effect command without any pre-configured scope."
+commands.deny = ["restart_effect"]

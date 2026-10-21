@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-get-selected-output-device"
+description = "Enables the get_selected_output_device command without any pre-configured scope."
+commands.allow = ["get_selected_output_device"]
+
+[[permission]]
+identifier = "deny-get-selected-output-device"
+description = "Denies the get_selected_output_device command without any pre-configured scope."
+commands.deny = ["get_selected_output_device"]

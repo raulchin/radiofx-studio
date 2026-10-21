@@ -1,0 +1,64 @@
+name: Paquetes de prueba sin firma
+
+on:
+  workflow_dispatch:
+    inputs:
+      benchmark:
+        description: Ejecutar tambien benchmark offline de CPU (no audio fisico)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: macos
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Leer versiones del proyecto
+        id: tools
+        shell: bash
+        run: |
+          node -e 'const fs = require("node:fs"); const t = JSON.parse(fs.readFileSync("scripts/toolchain.json", "utf8")); fs.appendFileSync(process.env.GITHUB_OUTPUT, `node=${t.node}\nrust=${t.rust}\n`);'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.tools.outputs.node }}
+          cache: npm
+      - name: Preparar Rust en el runner CI
+        run: rustup toolchain install ${{ steps.tools.outputs.rust }} --profile minimal --component rustfmt --component clippy
+      - run: rustup default ${{ steps.tools.outputs.rust }}
+      - name: Prerrequisitos Linux (solo CI)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev libayatana-appindicator3-dev librsvg2-dev libasound2-dev patchelf
+      - run: npm ci
+      - run: npm run release:preflight
+      - run: npm run check:all -- --online
+      - name: Crear paquete unsigned de prueba (descargas de build permitidas)
+        run: npm run bundle:${{ matrix.platform }} -- --online
+      - name: Benchmark CPU opcional sin dispositivos
+        if: inputs.benchmark && runner.os == 'Linux'
+        run: npm run bench:audio -- --report src-tauri/target/release/audio-benchmark.json
+      - run: npm run release:artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: radiofx-unsigned-test-${{ matrix.platform }}-${{ runner.arch }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            src-tauri/target/release/bundle/**/*.deb
+            src-tauri/target/release/bundle/**/*.exe
+            src-tauri/target/release/bundle/**/*.dmg
+            src-tauri/target/release/artifacts.json
+            src-tauri/target/release/audio-benchmark.json

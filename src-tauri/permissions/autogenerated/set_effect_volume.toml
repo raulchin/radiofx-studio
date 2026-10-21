@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-set-effect-volume"
+description = "Enables the set_effect_volume command without any pre-configured scope."
+commands.allow = ["set_effect_volume"]
+
+[[permission]]
+identifier = "deny-set-effect-volume"
+description = "Denies the set_effect_volume command without any pre-configured scope."
+commands.deny = ["set_effect_volume"]

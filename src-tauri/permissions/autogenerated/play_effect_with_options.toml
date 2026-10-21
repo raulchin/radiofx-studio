@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-play-effect-with-options"
+description = "Enables the play_effect_with_options command without any pre-configured scope."
+commands.allow = ["play_effect_with_options"]
+
+[[permission]]
+identifier = "deny-play-effect-with-options"
+description = "Denies the play_effect_with_options command without any pre-configured scope."
+commands.deny = ["play_effect_with_options"]

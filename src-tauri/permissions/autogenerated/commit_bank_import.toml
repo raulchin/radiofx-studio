@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-commit-bank-import"
+description = "Enables the commit_bank_import command without any pre-configured scope."
+commands.allow = ["commit_bank_import"]
+
+[[permission]]
+identifier = "deny-commit-bank-import"
+description = "Denies the commit_bank_import command without any pre-configured scope."
+commands.deny = ["commit_bank_import"]

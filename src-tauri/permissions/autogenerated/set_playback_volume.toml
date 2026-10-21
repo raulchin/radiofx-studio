@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-set-playback-volume"
+description = "Enables the set_playback_volume command without any pre-configured scope."
+commands.allow = ["set_playback_volume"]
+
+[[permission]]
+identifier = "deny-set-playback-volume"
+description = "Denies the set_playback_volume command without any pre-configured scope."
+commands.deny = ["set_playback_volume"]

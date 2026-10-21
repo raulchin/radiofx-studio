@@ -1,0 +1,244 @@
+{
+  "benchmark": "offline_audio_benchmark",
+  "commands": {
+    "configuredVoiceLimit": 64,
+    "playAck": {
+      "count": 100,
+      "estimator": "nearest-rank",
+      "p50": 196.87099999999998,
+      "p95": 296.671,
+      "p99": 405.377,
+      "unit": "microseconds"
+    },
+    "scope": "AudioService + Engine + NativeDriver offline; ACK y corte medidos en ensayos separados; sin latencia fisica",
+    "stopAck": {
+      "count": 100,
+      "estimator": "nearest-rank",
+      "p50": 9618.835,
+      "p95": 9953.546,
+      "p99": 10013.175,
+      "unit": "microseconds"
+    },
+    "stopCutThroughNextBlock": {
+      "count": 100,
+      "estimator": "nearest-rank",
+      "p50": 7.897000000000001,
+      "p95": 10.151,
+      "p99": 12.177,
+      "unit": "microseconds"
+    }
+  },
+  "conversion": {
+    "coldCount": 1,
+    "coldMicroseconds": 580.3670000000001,
+    "inputChannels": 1,
+    "inputFrames": 21600,
+    "outputChannels": 2,
+    "outputSamples": 43200,
+    "scope": "prepare_output mono a estereo; no decode ni arranque",
+    "warm": {
+      "count": 200,
+      "estimator": "nearest-rank",
+      "p50": 0.186,
+      "p95": 0.189,
+      "p99": 0.23099999999999998,
+      "unit": "microseconds"
+    }
+  },
+  "limitations": [
+    "Solo software offline; no salida, CPAL, GUI ni datos de usuario",
+    "No garantiza p95 audible <50 ms, CPU porcentual, RSS estable ni soporte de hardware",
+    "Render cronometrado incluye comprobaciones numericas; no incluye compilacion ni arranque del worker",
+    "Versiones de herramientas y flags adicionales deben registrarse por el runner"
+  ],
+  "mixing": [
+    {
+      "activeResources": {
+        "activeVoices": 1,
+        "conversionInputs": 1,
+        "converted": 1,
+        "convertedSampleStrongCounts": [2],
+        "convertedSamples": 43200,
+        "liveRenderSources": 1,
+        "renderSources": 1
+      },
+      "blockRender": {
+        "count": 200,
+        "estimator": "nearest-rank",
+        "p50": 54.79,
+        "p95": 68.78800000000001,
+        "p99": 75.245,
+        "unit": "microseconds"
+      },
+      "closedResources": {
+        "activeVoices": 0,
+        "conversionInputs": 0,
+        "converted": 0,
+        "convertedSampleStrongCounts": [],
+        "convertedSamples": 0,
+        "liveRenderSources": 0,
+        "renderSources": 0
+      },
+      "masterZeroSilent": true,
+      "peakSampleAmplitude": 0.06290780752897263,
+      "processedSamples": 204800,
+      "representedAudioSeconds": 2.1333333333333333,
+      "retiredResources": {
+        "activeVoices": 0,
+        "conversionInputs": 1,
+        "converted": 1,
+        "convertedSampleStrongCounts": [1],
+        "convertedSamples": 43200,
+        "liveRenderSources": 0,
+        "renderSources": 1
+      },
+      "softwareRealtimeFactor": 182.514797244597,
+      "softwareRealtimeFactorDefinition": "segundos PCM representados / segundos de render medido; no porcentaje CPU",
+      "voices": 1
+    },
+    {
+      "activeResources": {
+        "activeVoices": 16,
+        "conversionInputs": 1,
+        "converted": 1,
+        "convertedSampleStrongCounts": [17],
+        "convertedSamples": 43200,
+        "liveRenderSources": 16,
+        "renderSources": 16
+      },
+      "blockRender": {
+        "count": 200,
+        "estimator": "nearest-rank",
+        "p50": 518.0070000000001,
+        "p95": 528.256,
+        "p99": 587.036,
+        "unit": "microseconds"
+      },
+      "closedResources": {
+        "activeVoices": 0,
+        "conversionInputs": 0,
+        "converted": 0,
+        "convertedSampleStrongCounts": [],
+        "convertedSamples": 0,
+        "liveRenderSources": 0,
+        "renderSources": 0
+      },
+      "masterZeroSilent": true,
+      "peakSampleAmplitude": 0.7467631101608276,
+      "processedSamples": 204800,
+      "representedAudioSeconds": 2.1333333333333333,
+      "retiredResources": {
+        "activeVoices": 0,
+        "conversionInputs": 1,
+        "converted": 1,
+        "convertedSampleStrongCounts": [1],
+        "convertedSamples": 43200,
+        "liveRenderSources": 0,
+        "renderSources": 16
+      },
+      "softwareRealtimeFactor": 20.548229458919057,
+      "softwareRealtimeFactorDefinition": "segundos PCM representados / segundos de render medido; no porcentaje CPU",
+      "voices": 16
+    },
+    {
+      "activeResources": {
+        "activeVoices": 64,
+        "conversionInputs": 1,
+        "converted": 1,
+        "convertedSampleStrongCounts": [65],
+        "convertedSamples": 43200,
+        "liveRenderSources": 64,
+        "renderSources": 64
+      },
+      "blockRender": {
+        "count": 200,
+        "estimator": "nearest-rank",
+        "p50": 2004.8650000000002,
+        "p95": 2080.521,
+        "p99": 2518.812,
+        "unit": "microseconds"
+      },
+      "closedResources": {
+        "activeVoices": 0,
+        "conversionInputs": 0,
+        "converted": 0,
+        "convertedSampleStrongCounts": [],
+        "convertedSamples": 0,
+        "liveRenderSources": 0,
+        "renderSources": 0
+      },
+      "masterZeroSilent": true,
+      "peakSampleAmplitude": 0.9496089816093445,
+      "processedSamples": 204800,
+      "representedAudioSeconds": 2.1333333333333333,
+      "retiredResources": {
+        "activeVoices": 0,
+        "conversionInputs": 1,
+        "converted": 1,
+        "convertedSampleStrongCounts": [1],
+        "convertedSamples": 43200,
+        "liveRenderSources": 0,
+        "renderSources": 64
+      },
+      "softwareRealtimeFactor": 5.256641211554082,
+      "softwareRealtimeFactorDefinition": "segundos PCM representados / segundos de render medido; no porcentaje CPU",
+      "voices": 64
+    }
+  ],
+  "parameters": {
+    "blockFrames": 512,
+    "blockSamples": 1024,
+    "channels": 2,
+    "iterations": 200,
+    "sampleRate": 48000,
+    "stopIterations": 100,
+    "warmupBlocks": 100
+  },
+  "profile": {
+    "debugAssertions": false,
+    "optimizedProfileRequired": true
+  },
+  "schemaVersion": 1,
+  "stress": {
+    "baseline": {
+      "activeVoices": 0,
+      "conversionInputs": 1,
+      "converted": 1,
+      "convertedSampleStrongCounts": [1],
+      "convertedSamples": 256,
+      "liveRenderSources": 0,
+      "renderSources": 0
+    },
+    "closed": {
+      "activeVoices": 0,
+      "conversionInputs": 0,
+      "converted": 0,
+      "convertedSampleStrongCounts": [],
+      "convertedSamples": 0,
+      "liveRenderSources": 0,
+      "renderSources": 0
+    },
+    "cycles": 500,
+    "end": {
+      "activeVoices": 0,
+      "conversionInputs": 1,
+      "converted": 1,
+      "convertedSampleStrongCounts": [1],
+      "convertedSamples": 256,
+      "liveRenderSources": 0,
+      "renderSources": 0
+    },
+    "framesBeforeActiveStop": 32,
+    "naturalFinishCycles": 250,
+    "rssEndKiB": 17452,
+    "rssScope": "proceso completo; observacion, no asercion de estabilidad ni propiedad del heap",
+    "rssWarmupKiB": 17452,
+    "sourceFrames": 128,
+    "stoppedActiveCycles": 250,
+    "voicesPerCycle": 16,
+    "warmupCycles": 1
+  },
+  "targetArch": "x86_64",
+  "targetOS": "linux",
+  "timestampUnixMilliseconds": 1792544451910
+}

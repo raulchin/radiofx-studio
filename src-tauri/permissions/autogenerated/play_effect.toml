@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-play-effect"
+description = "Enables the play_effect command without any pre-configured scope."
+commands.allow = ["play_effect"]
+
+[[permission]]
+identifier = "deny-play-effect"
+description = "Denies the play_effect command without any pre-configured scope."
+commands.deny = ["play_effect"]

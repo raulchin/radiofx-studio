@@ -1,0 +1,32 @@
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
+        tauri_build::AppManifest::new().commands(&[
+            "get_audio_engine_status",
+            "list_output_devices",
+            "get_selected_output_device",
+            "set_output_device",
+            "play_effect",
+            "stop_playback",
+            "stop_effect",
+            "stop_all",
+            "set_master_volume",
+            "set_playback_volume",
+            "set_effect_volume",
+            "set_max_concurrent_playbacks",
+            "get_active_playbacks",
+            "get_library_snapshot",
+            "save_board",
+            "import_audio_files",
+            "set_library_columns",
+            "play_effect_with_options",
+            "restart_effect",
+            "set_playback_loop",
+            "fade_out_playback",
+            "prepare_bank_import",
+            "commit_bank_import",
+            "cancel_bank_import",
+            "export_sound_banks",
+        ]),
+    ))?;
+    Ok(())
+}

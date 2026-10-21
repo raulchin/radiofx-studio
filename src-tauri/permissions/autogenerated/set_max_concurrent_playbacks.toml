@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-set-max-concurrent-playbacks"
+description = "Enables the set_max_concurrent_playbacks command without any pre-configured scope."
+commands.allow = ["set_max_concurrent_playbacks"]
+
+[[permission]]
+identifier = "deny-set-max-concurrent-playbacks"
+description = "Denies the set_max_concurrent_playbacks command without any pre-configured scope."
+commands.deny = ["set_max_concurrent_playbacks"]
