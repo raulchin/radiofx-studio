@@ -28,7 +28,7 @@ interface SoundboardProps {
 const dragType = "application/x-radiofx-button";
 
 /**
- * Presenta asignaciones con arrastre y alternativa por teclado o táctil.
+ * Presenta una paleta compacta con arrastre y alternativa por teclado o táctil.
  * @param props Banco, estados demo o derivados de Rust y acciones del controlador.
  * @returns Cuadrícula adaptable o estado vacío del banco.
  */
@@ -129,7 +129,9 @@ export function Soundboard({
               <span className="pad-position">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <span className="truncate text-xs">{button.category}</span>
+              <span className="truncate pad-category" title={button.category}>
+                {button.category}
+              </span>
               <span
                 draggable={!editingDisabled && !orderingDisabled}
                 onDragStart={(event) => startDrag(event, button.id)}
@@ -149,12 +151,18 @@ export function Soundboard({
               aria-pressed={nativeStates ? undefined : status === "playing"}
               aria-describedby={`state-${button.id}`}
             >
-              <span className="pad-name">{button.name}</span>
+              <span className="pad-name" title={button.name}>
+                {button.name}
+              </span>
               <span className="pad-bottom">
                 <span className="pad-time">
                   {formatDuration(button.durationMs)}
                 </span>
-                <span className="pad-state" id={`state-${button.id}`}>
+                <span
+                  className="pad-state"
+                  id={`state-${button.id}`}
+                  title={native?.label ?? stateLabels[status]}
+                >
                   <span className="state-dot" aria-hidden="true" />
                   {native?.label ?? stateLabels[status]}
                 </span>

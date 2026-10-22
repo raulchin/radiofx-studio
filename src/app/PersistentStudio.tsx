@@ -142,7 +142,7 @@ export function PersistentStudio({
                   + Agregar botón
                 </button>
               </div>
-              <div className="native-routing">
+              <div className="native-routing mb-5">
                 <label className="field">
                   Buscar en la paleta
                   <input
@@ -167,7 +167,7 @@ export function PersistentStudio({
                 </label>
               </div>
               {(!!board.query.trim() || board.allBanks) && (
-                <p role="status" className="muted">
+                <p role="status" className="muted mb-3">
                   Ordenación y arrastre deshabilitados durante la búsqueda o la
                   vista de todos los bancos. La selección guardada y las voces
                   no cambian.
