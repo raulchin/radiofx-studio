@@ -338,8 +338,8 @@ describe("release command plans", () => {
       "rustup target add x86_64-apple-darwin aarch64-apple-darwin",
     );
     expect(workflow).not.toContain("rustup target add universal-apple-darwin");
-    expect(workflow).toContain('lipo -verify_arch x86_64 arm64 "$BINARY"');
-    expect(workflow).toContain('lipo -verify_arch x86_64 arm64 "$MOUNTED"');
+    expect(workflow).toContain('lipo "$BINARY" -verify_arch x86_64 arm64');
+    expect(workflow).toContain('lipo "$MOUNTED" -verify_arch x86_64 arm64');
     expect(workflow).toContain('hdiutil attach "$DMG" -readonly -nobrowse');
     expect(workflow).toContain('cmp "$BINARY" "$MOUNTED"');
     expect(workflow).toContain("radiofx-unsigned-test-macos-universal");

@@ -58,7 +58,7 @@ jobs:
           APP="$ROOT/bundle/macos/RadioFX Studio.app"
           BINARY="$APP/Contents/MacOS/radiofx-studio"
           REPORT="$ROOT/macos-universal-verification.txt"
-          /usr/bin/lipo -verify_arch x86_64 arm64 "$BINARY"
+          /usr/bin/lipo "$BINARY" -verify_arch x86_64 arm64
           /usr/bin/lipo -archs "$BINARY" | tee "$REPORT"
           /usr/bin/plutil -p "$APP/Contents/Info.plist" >> "$REPORT"
           DMGS=("$ROOT"/bundle/dmg/*.dmg)
@@ -70,7 +70,7 @@ jobs:
           trap '/usr/bin/hdiutil detach "$MOUNT" >/dev/null 2>&1 || true; rmdir "$MOUNT" 2>/dev/null || true' EXIT
           /usr/bin/hdiutil attach "$DMG" -readonly -nobrowse -mountpoint "$MOUNT" >> "$REPORT"
           MOUNTED="$MOUNT/RadioFX Studio.app/Contents/MacOS/radiofx-studio"
-          /usr/bin/lipo -verify_arch x86_64 arm64 "$MOUNTED"
+          /usr/bin/lipo "$MOUNTED" -verify_arch x86_64 arm64
           cmp "$BINARY" "$MOUNTED"
           /usr/bin/file "$MOUNTED" | tee -a "$REPORT"
           /usr/bin/shasum -a 256 "$DMG" "$MOUNTED" | tee -a "$REPORT"
