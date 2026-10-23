@@ -38,6 +38,9 @@ jobs:
       - name: Preparar Rust en el runner CI
         run: rustup toolchain install ${{ steps.tools.outputs.rust }} --profile minimal --component rustfmt --component clippy
       - run: rustup default ${{ steps.tools.outputs.rust }}
+      - name: Preparar Intel y Apple Silicon para el bundle universal
+        if: runner.os == 'macOS'
+        run: rustup target add x86_64-apple-darwin aarch64-apple-darwin --toolchain ${{ steps.tools.outputs.rust }}
       - name: Prerrequisitos Linux (solo CI)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev libayatana-appindicator3-dev librsvg2-dev libasound2-dev patchelf
@@ -46,11 +49,41 @@ jobs:
       - run: npm run check:all -- --online
       - name: Crear paquete unsigned de prueba (descargas de build permitidas)
         run: npm run bundle:${{ matrix.platform }} -- --online
+      - name: Verificar ambas arquitecturas y el contenido del DMG
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="src-tauri/target/universal-apple-darwin/release"
+          APP="$ROOT/bundle/macos/RadioFX Studio.app"
+          BINARY="$APP/Contents/MacOS/radiofx-studio"
+          REPORT="$ROOT/macos-universal-verification.txt"
+          /usr/bin/lipo -verify_arch x86_64 arm64 "$BINARY"
+          /usr/bin/lipo -archs "$BINARY" | tee "$REPORT"
+          /usr/bin/plutil -p "$APP/Contents/Info.plist" >> "$REPORT"
+          DMGS=("$ROOT"/bundle/dmg/*.dmg)
+          test "${#DMGS[@]}" -eq 1
+          DMG="${DMGS[0]}"
+          test -f "$DMG"
+          /usr/bin/hdiutil verify "$DMG" | tee -a "$REPORT"
+          MOUNT="$(mktemp -d "$RUNNER_TEMP/radiofx-dmg-XXXXXX")"
+          trap '/usr/bin/hdiutil detach "$MOUNT" >/dev/null 2>&1 || true; rmdir "$MOUNT" 2>/dev/null || true' EXIT
+          /usr/bin/hdiutil attach "$DMG" -readonly -nobrowse -mountpoint "$MOUNT" >> "$REPORT"
+          MOUNTED="$MOUNT/RadioFX Studio.app/Contents/MacOS/radiofx-studio"
+          /usr/bin/lipo -verify_arch x86_64 arm64 "$MOUNTED"
+          cmp "$BINARY" "$MOUNTED"
+          /usr/bin/file "$MOUNTED" | tee -a "$REPORT"
+          /usr/bin/shasum -a 256 "$DMG" "$MOUNTED" | tee -a "$REPORT"
       - name: Benchmark CPU opcional sin dispositivos
         if: inputs.benchmark && runner.os == 'Linux'
         run: npm run bench:audio -- --report src-tauri/target/release/audio-benchmark.json
-      - run: npm run release:artifacts
+      - if: runner.os != 'macOS'
+        run: npm run release:artifacts
+      - name: Manifiesto del paquete universal macOS
+        if: runner.os == 'macOS'
+        run: npm run release:artifacts -- --directory src-tauri/target/universal-apple-darwin/release/bundle --output src-tauri/target/universal-apple-darwin/release/artifacts.json
       - uses: actions/upload-artifact@v4
+        if: runner.os != 'macOS'
         with:
           name: radiofx-unsigned-test-${{ matrix.platform }}-${{ runner.arch }}
           retention-days: 14
@@ -61,3 +94,13 @@ jobs:
             src-tauri/target/release/bundle/**/*.dmg
             src-tauri/target/release/artifacts.json
             src-tauri/target/release/audio-benchmark.json
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'macOS'
+        with:
+          name: radiofx-unsigned-test-macos-universal
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            src-tauri/target/universal-apple-darwin/release/artifacts.json
+            src-tauri/target/universal-apple-darwin/release/macos-universal-verification.txt

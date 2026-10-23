@@ -30,6 +30,7 @@ main(() => {
         "build",
         "--ci",
         "--no-sign",
+        ...(platform === "macos" ? ["--target", "universal-apple-darwin"] : []),
         "--bundles",
         targets[platform],
         "--",

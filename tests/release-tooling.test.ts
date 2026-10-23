@@ -309,11 +309,43 @@ describe("release command plans", () => {
     expect(plan.commands[0].args).toContain("--no-sign");
     expect(plan.commands[0].args).toContain("--locked");
     expect(plan.commands[0].args).toContain("--offline");
+    if (host === "macos") {
+      const target = plan.commands[0].args.indexOf("--target");
+      expect(target).toBeGreaterThan(-1);
+      expect(plan.commands[0].args[target + 1]).toBe("universal-apple-darwin");
+      expect(
+        plan.commands[0].args[plan.commands[0].args.indexOf("--bundles") + 1],
+      ).toBe("app,dmg");
+    } else {
+      expect(plan.commands[0].args).not.toContain("--target");
+    }
     expect(
       cli("bundle.mjs", [host === "linux" ? "windows" : "linux", "--dry-run"])
         .status,
     ).toBe(1);
     expect(cli("bundle.mjs", ["other", "--dry-run"]).status).toBe(1);
+  });
+
+  /** Ambos targets reales deben prepararse; el target universal es una operación del CLI Tauri. */
+  it("prepares both macOS targets and validates the app mounted from the universal DMG", () => {
+    const workflow = readFileSync(
+      join(root, ".github/workflows/distribution.yml"),
+      "utf8",
+    );
+    const bundler = readFileSync(join(root, "scripts/bundle.mjs"), "utf8");
+    expect(bundler).toContain('["--target", "universal-apple-darwin"]');
+    expect(workflow).toContain(
+      "rustup target add x86_64-apple-darwin aarch64-apple-darwin",
+    );
+    expect(workflow).not.toContain("rustup target add universal-apple-darwin");
+    expect(workflow).toContain('lipo -verify_arch x86_64 arm64 "$BINARY"');
+    expect(workflow).toContain('lipo -verify_arch x86_64 arm64 "$MOUNTED"');
+    expect(workflow).toContain('hdiutil attach "$DMG" -readonly -nobrowse');
+    expect(workflow).toContain('cmp "$BINARY" "$MOUNTED"');
+    expect(workflow).toContain("radiofx-unsigned-test-macos-universal");
+    expect(workflow).toContain(
+      "--directory src-tauri/target/universal-apple-darwin/release/bundle",
+    );
   });
 });
 
